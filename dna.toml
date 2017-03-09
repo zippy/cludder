@@ -17,11 +17,12 @@ HashType = "sha2-256"
     Code = "zome_cluffer.zy"
     NucleusType = "zygo"
     [Zomes.Cluffer.CodeHash]
+      H = [18, 32, 40, 228, 39, 245, 20, 91, 62, 66, 241, 205, 133, 201, 177, 0, 81, 4, 54, 64, 26, 158, 33, 53, 174, 54, 144, 151, 167, 228, 104, 70, 243, 189]
     [Zomes.Cluffer.Entries]
       [Zomes.Cluffer.Entries.handle]
         Name = "handle"
-        DataFormat = "json"
-        Schema = "schema_handle.json"
+        DataFormat = "string"
+        Schema = ""
         [Zomes.Cluffer.Entries.handle.SchemaHash]
       [Zomes.Cluffer.Entries.post]
         Name = "post"

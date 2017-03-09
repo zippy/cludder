@@ -1,0 +1,80 @@
+(expose "getProperty" STRING)
+(defn getProperty [name]
+  (property name))
+
+(expose "follow" STRING)
+(defn follow [userAddress]
+  //"Expects of userAddress hash of the person you want to follow"
+  (let [me (property "_agent_id")]
+    (commit "follow" userAddress)
+    (putmeta userAddress me "follower")
+    (putmeta me userAddress "following")))
+
+(expose "unfollow" STRING)
+(defn unfollow [userAddress]
+  (let [me (property "_agent_id")]
+    (commit "unfollow" userAddress)
+    // (delmeta userAddress me "follower")
+    // (delmeta me userAddress "following")
+    ))
+
+(expose "post" STRING)
+(defn post [postBody]
+  (let [key (commit "post" postBody)
+        me  (property "_agent_id")]
+    (put key)
+    (putmeta me key "post")
+    key))
+
+(expose "getPostsBy" STRING)
+(defn getPostsBy [userAddress]
+  (let [posts (getmeta userAddress "post")]
+    (debug (str posts))
+    posts))
+
+(expose "newHandle" STRING)
+(defn newHandle [handle]
+  (let [key (commit "handle" handle)
+        me  (property "_agent_id")]
+    (put key)
+    (putmeta me key "handle")
+    key))
+
+// ========================== Callbacks ==========================
+(defn genesis []
+  (letseq [handle (property "_agent_name")
+           key (commit "handle" handle)]
+    (put (property "_agent_id"))
+    (put key)
+    (putmeta (property "_id") key "handle")
+    true))
+
+(defn validate [entryType entryData entryProperties]
+  (cond
+    (== entryType "handle")
+    (let [headers (hget entryProperties %headers)
+          address (hget headers %address)  // maybe a :%
+          collision (get address)]
+      (debug (str collision) true)) // TODO deal with handle collisions
+
+    (or (== entryType "follow") (== entryType "unfollow"))
+    (let [fromAddr (first (hget entryProperties %Sources))
+          tag (hget entryProperties %MetaTag)]
+      (cond (== tag "follower")
+            // entryData needs to match the fromAddr
+            (== tag "following")
+
+            ))
+
+
+
+    (true)
+    ))
+
+// when putmeta "follower", confirm chain of meta-tagged hash
+// when putmeta "following", confirm chain of base-hash
+
+// TODO putmeta "post", confirm that it is coming from the person
+//   it is attached to
+//   - also on "follow" and "unfollow"
+// TODO strip "handle" of any illegal chars
