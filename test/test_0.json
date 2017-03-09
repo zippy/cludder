@@ -1,0 +1,10 @@
+[
+  {
+    "Zome": "Cluffer",
+    "FnName": "genesis",
+    "Input": "",
+    "Output": "%h%",
+    "Err": "",
+    "Regexp": ""
+  }
+]

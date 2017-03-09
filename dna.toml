@@ -1,0 +1,30 @@
+Version = 0
+Id = "16459cd5-0456-11e7-9200-109add63ffcb"
+Name = "cluffer"
+PropertiesSchema = "schema_properties.json"
+HashType = "sha2-256"
+
+[Properties]
+  description = "A Lisp Clutter/Twitter"
+  language = "en"
+
+[BasedOn]
+
+[Zomes]
+  [Zomes.Cluffer]
+    Name = "Cluffer"
+    Description = "Clutter in Lisp"
+    Code = "zome_cluffer.zy"
+    NucleusType = "zygo"
+    [Zomes.Cluffer.CodeHash]
+    [Zomes.Cluffer.Entries]
+      [Zomes.Cluffer.Entries.handle]
+        Name = "handle"
+        DataFormat = "json"
+        Schema = "schema_handle.json"
+        [Zomes.Cluffer.Entries.handle.SchemaHash]
+      [Zomes.Cluffer.Entries.post]
+        Name = "post"
+        DataFormat = "string"
+        Schema = ""
+        [Zomes.Cluffer.Entries.post.SchemaHash]
