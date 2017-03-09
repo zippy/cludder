@@ -29,3 +29,8 @@ HashType = "sha2-256"
         DataFormat = "string"
         Schema = ""
         [Zomes.Cluffer.Entries.post.SchemaHash]
+      [Zomes.Cluffer.Entries.follow]
+        Name = "follow"
+        DataFormat = "string"
+        Schema = ""
+        [Zomes.Cluffer.Entries.follow.SchemaHash]
