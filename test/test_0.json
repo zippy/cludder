@@ -1,6 +1,6 @@
 [
   {
-    "Zome": "Cluffer",
+    "Zome": "cludder",
     "FnName": "getProperty",
     "Input": "_agent_name",
     "Output": "zee.larson@gmail.com",
@@ -8,7 +8,7 @@
     "Regexp": ""
   },
   {
-    "Zome": "Cluffer",
+    "Zome": "cludder",
     "FnName": "newHandle",
     "Input": "buffaloBill",
     "Output": "%h%",
@@ -16,7 +16,7 @@
     "Regexp": ""
   },
   {
-    "Zome": "Cluffer",
+    "Zome": "cludder",
     "FnName": "newHandle",
     "Input": "buffaloBill",
     "Output": "%h%",
@@ -24,7 +24,7 @@
     "Regexp": ""
   },
   {
-    "Zome": "Cluffer",
+    "Zome": "cludder",
     "FnName": "post",
     "Input": "here is a test post",
     "Output": "%h%",
@@ -32,7 +32,7 @@
     "Regexp": ""
   },
   {
-    "Zome": "Cluffer",
+    "Zome": "cludder",
     "FnName": "getProperty",
     "Input": "_id",
     "Output": "",
@@ -40,7 +40,7 @@
     "Regexp": "Qm[a-zA-Z0-9]*"
   },
   {
-    "Zome":   "Cluffer",
+    "Zome":   "cludder",
     "FnName": "getPostsBy",
     "Input":  "%r1%",
     "Output": "here is a test post",

@@ -1,6 +1,6 @@
 Version = 0
 Id = "16459cd5-0456-11e7-9200-109add63ffcb"
-Name = "cluffer"
+Name = "cludder"
 PropertiesSchema = "schema_properties.json"
 HashType = "sha2-256"
 
@@ -11,26 +11,26 @@ HashType = "sha2-256"
 [BasedOn]
 
 [Zomes]
-  [Zomes.Cluffer]
-    Name = "Cluffer"
+  [Zomes.cludder]
+    Name = "cludder"
     Description = "Clutter in Lisp"
-    Code = "zome_cluffer.zy"
+    Code = "zome_cludder.zy"
     NucleusType = "zygo"
-    [Zomes.Cluffer.CodeHash]
+    [Zomes.cludder.CodeHash]
       H = [18, 32, 40, 228, 39, 245, 20, 91, 62, 66, 241, 205, 133, 201, 177, 0, 81, 4, 54, 64, 26, 158, 33, 53, 174, 54, 144, 151, 167, 228, 104, 70, 243, 189]
-    [Zomes.Cluffer.Entries]
-      [Zomes.Cluffer.Entries.handle]
+    [Zomes.cludder.Entries]
+      [Zomes.cludder.Entries.handle]
         Name = "handle"
         DataFormat = "string"
         Schema = ""
-        [Zomes.Cluffer.Entries.handle.SchemaHash]
-      [Zomes.Cluffer.Entries.post]
+        [Zomes.cludder.Entries.handle.SchemaHash]
+      [Zomes.cludder.Entries.post]
         Name = "post"
         DataFormat = "string"
         Schema = ""
-        [Zomes.Cluffer.Entries.post.SchemaHash]
-      [Zomes.Cluffer.Entries.follow]
+        [Zomes.cludder.Entries.post.SchemaHash]
+      [Zomes.cludder.Entries.follow]
         Name = "follow"
         DataFormat = "string"
         Schema = ""
-        [Zomes.Cluffer.Entries.follow.SchemaHash]
+        [Zomes.cludder.Entries.follow.SchemaHash]
