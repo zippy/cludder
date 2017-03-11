@@ -3,9 +3,9 @@
     "Zome": "cludder",
     "FnName": "getProperty",
     "Input": "_agent_name",
-    "Output": "zee.larson@gmail.com",
+    "Output": "",
     "Err": "",
-    "Regexp": ""
+    "Regexp": "[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z]+"
   },
   {
     "Zome": "cludder",

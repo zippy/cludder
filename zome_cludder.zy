@@ -25,7 +25,13 @@
         me  (property "_agent_id")]
     (put key)                               // On the DHT, puts the new post (via its hash,
                                             // which DHT nodes will use to request validation info from my source chain)
+    (for [(def i 0) (< i 20000) (def i (+ 1 i))] 
+      (mod 99999999 7))
+    (debug (concat "post text: " (str (get key))))
     (putmeta me key "post")                 // On the DHT, puts a link on my hash to the new post
+    (for [(def i 0) (< i 20000) (def i (+ 1 i))] 
+      (mod 99999999 7))
+    (debug (concat "meta: " (str (getmeta me "post"))))
     key))                                   // Returns the hash key of the new post to the calling function
 
 (expose "getPostsBy" STRING)
@@ -61,8 +67,11 @@
            key (commit "handle" handle)]    // On my source chain, commits my handle for the first time and assigns its hash to 'key'
     (put (property "_agent_id"))            // On the DHT, puts the hash of my genesis identity entry (init string, public keys, etc.)
                                             // I.e., this announces myself to the network
+    (for [(def i 0) (< i 20000) (def i (+ 1 i))] 
+      (mod 99999999 7))
+    (debug (concat "genesis _agent_id: " (str (get (property "_agent_id")))))
     (put key)                               // On the DHT, puts my handle string via its hash
-    (putmeta (property "_id") key "handle") // On the DHT, puts a link on my hash address to my handle text
+    (putmeta (property "_agent_id") key "handle") // On the DHT, puts a link on my hash address to my handle text
     true))
 
 
