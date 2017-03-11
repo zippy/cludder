@@ -4,7 +4,7 @@
 
 (expose "follow" STRING)
 (defn follow [userAddress]
-  //"Expects of userAddress hash of the person you want to follow"
+  //Expects of userAddress hash of the person you want to follow
   (let [me (property "_agent_id")]
     (commit "follow" userAddress)
     (putmeta userAddress me "follower")
@@ -29,6 +29,7 @@
 (expose "getPostsBy" STRING)
 (defn getPostsBy [userAddress]
   (let [posts (getmeta userAddress "post")]
+  // TODO add "last 10" or "since timestamp" when query info is supported
     (debug (str posts))
     posts))
 
@@ -40,7 +41,7 @@
     (putmeta me key "handle")
     key))
 
-// ========================== Callbacks ==========================
+// ====================== Callbacks ========================
 (defn genesis []
   (letseq [handle (property "_agent_name")
            key (commit "handle" handle)]
@@ -50,31 +51,25 @@
     true))
 
 (defn validate [entryType entryData entryProperties]
-  (cond
-    (== entryType "handle")
-    (let [headers (hget entryProperties %headers)
-          address (hget headers %address)  // maybe a :%
-          collision (get address)]
-      (debug (str collision) true)) // TODO deal with handle collisions
-
-    (or (== entryType "follow") (== entryType "unfollow"))
-    (let [fromAddr (first (hget entryProperties %Sources))
-          tag (hget entryProperties %MetaTag)]
-      (cond (== tag "follower")
-            // entryData needs to match the fromAddr
-            (== tag "following")
-
-            ))
-
-
-
-    (true)
-    ))
-
-// when putmeta "follower", confirm chain of meta-tagged hash
-// when putmeta "following", confirm chain of base-hash
-
-// TODO putmeta "post", confirm that it is coming from the person
-//   it is attached to
-//   - also on "follow" and "unfollow"
-// TODO strip "handle" of any illegal chars
+  true)
+//  (cond
+//    (== entryType "handle") (true)
+//    (let [headers (hget entryProperties %:headers)
+//          address (hget headers %address)  // maybe a :%
+//          collision (get address)]
+//      (debug (str collision) true))
+      // TODO deal with handle collisions
+      // TODO strip "handle" of any illegal chars
+//    (or (== entryType "follow") (== entryType "unfollow"))
+//    (let [fromAddr (first (hget entryProperties %Sources))
+//          tag (hget entryProperties %MetaTag)]
+//      (cond (== tag "follower")
+//            (true) // entryData needs to match the sourceAddr
+//            (== tag "following")
+//            (true) // base-hash needs to match the sourceAddr
+//            (true)))
+//      (and (== entryType "post") (== tag "post"))
+//          (true) // base-hash matches sourceAddr
+//      (true))
+//    (true)
+//    )
