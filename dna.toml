@@ -1,4 +1,4 @@
-# Arbitrary version number
+# Arbitrary Application version number
 Version = 0
 
 # Automatically-generated UUID generated and inserted here by 'hc clone'
@@ -50,7 +50,7 @@ PropertiesSchema = "schema_properties.json"
         DataFormat = "string"
         Schema = ""
         [Zomes.cludder.Entries.post.SchemaHash]
-      
+
       [Zomes.cludder.Entries.follow]    # Contains the user address (hash) of the person you want to follow
         Name = "follow"
         DataFormat = "string"
