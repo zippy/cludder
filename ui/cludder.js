@@ -3,22 +3,25 @@ var Cludder = {posts:{},users:{},follows:{},nick:""};
 function send(fn,data,resultFn) {
     $.post(
         "/fn/cludder/"+fn,
-        JSON.stringify(data),
+        data,
         function(response) {
-            resultFn(JSON.parse(response));
+            console.log("response: " + response);
+            resultFn(response);
         }
     ).error(function(response) {
-        console.log(response.responseText);
+        console.log("response failed: " + response.responseText);
     })
     ;
 };
 
 function getProfile() {
-    send("get",{what:"nick"},function(data) {
-        Cludder.nick = data;
-        $("#nick").html(data);
-        getPosts(data);
-    });
+    send("appProperty","App_Agent_Hash", function(me) {
+            send("getHandle",me,function(data) {
+                Cludder.nick = data;
+                $("#nick").html(data);
+                getMyPosts();
+        });
+    })
 }
 
 function addPost() {
@@ -27,7 +30,7 @@ function addPost() {
         message:$('#meow').val(),
         stamp: now.valueOf()
     };
-    send("addPost",post,function(data) {
+    send("post",post,function(data) {
         post.key = data; // save the key of our post to the post
         post.nick = Cludder.nick;
         var id = cachePost(post);
@@ -53,11 +56,23 @@ function makeUserHTML(user) {
     return '<div class="user">'+user.nick+'</div>';
 }
 
+function getMyPosts() {
+        send("appProperty", "App_Agent_Hash", function(me) {
+                getPosts(me)
+        })
+
+}
+
 function getPosts(by) {
-    send("get",{what:"posts",whom:by},function(arr) {
+    send("getPostsBy",by,function(arr) {
+        arr = JSON.parse(arr)
+        console.log("arr: " + JSON.stringify(arr))
         for (var i = 0, len = arr.length; i < len; i++) {
-            var post = JSON.parse(arr[i].C);
-            post.nick = by;
+            console.log("arr[i]: " + JSON.stringify(arr[i]))
+            var post = arr[i].E.C;
+            post.nick = send("getHandle", by, function(author_handle) {
+                return author_handle;
+            })
             var id = cachePost(post);
             displayPosts();
 //            $("#meows").prepend(makePost(id,post));
