@@ -6,7 +6,7 @@ Version = 0
 Id = "16459cd5-0456-11e7-9200-109add63ffcb"
 
 # Name of the application
-Name = "cludder"
+Name = "Cludder"
 
 # Selection of the hashing algorithm you want to use for the DHT's address-space
 HashType = "sha2-256"
@@ -16,7 +16,7 @@ PropertiesSchema = "properties.json"
 
 # Values for the schema
 [Properties]
-  description = "A Lisp Clutter/Twitter"
+  description = "A Lisp Clutter (Distributed Twitter Clone)"
   language = "en"
 
 # Place to acknowledge forking of prior development projects

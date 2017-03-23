@@ -1,28 +1,35 @@
 // Exposes a function to the UI so it can be called via localhost, web browser, or socket
-(expose "getProperty" STRING)
+(expose "getProperty" HC_STRING)
 (defn getProperty [name]            // The definition of the function you intend to expose
   (property name))                  // Retrieves a property of the holochain from the DNA (e.g., Name, Language)
 
-(expose "follow" STRING)
+(expose "appProperty" HC_STRING)
+(defn appProperty [name]            // The definition of the function you intend to expose
+  (cond (== name "App_Agent_Hash")   App_Agent_Hash
+        (== name "App_Agent_String") App_Agent_String
+        (== name "App_DNA_Hash")     App_DNA_Hash
+        (concat "Error: No App Property with name: " name)))
+
+(expose "follow" HC_STRING)
 (defn follow [userAddress]
   // Expects a userAddress hash of the person you want to follow
-  (let [me Agent_Hash]          // Looks up my hash address and assign it to 'me'
+  (let [me App_Agent_Hash]          // Looks up my hash address and assign it to 'me'
     (commit "follow" userAddress)           // Commits a new follow entry to my source chain
     (putmeta userAddress me "follower")     // On the DHT, puts a link on their hash to my hash as a "follower"
     (putmeta me userAddress "following")))  // On the DHT, puts a link on my hash to their hash as a "following"
 
-(expose "unfollow" STRING)
+(expose "unfollow" HC_STRING)
 (defn unfollow [userAddress]
-  (let [me Agent_Hash]
+  (let [me App_Agent_Hash]
     (commit "unfollow" userAddress)         // On my source chain, commits the unfollow entry
     // (delmeta userAddress me "follower")  // Marks the given follower link on their hash as deleted
     // (delmeta me userAddress "following") // Marks the given following link on my hash as deleted
     ))
 
-(expose "post" STRING)
-(defn post [postBody]
+(expose "addPost" HC_STRING)
+(defn addPost [postBody]
   (let [key (commit "post" postBody)        // Commits the post block to my source chain, assigns resulting hash to 'key'
-        me  (eval Agent_Hash)]
+        me  App_Agent_Hash]
     (put key)                               // On the DHT, puts the new post via its hash,
                                             // which DHT nodes will use to request validation info from my source chain
 //    (for [(def i 0) (< i 20000) (def i (+ 1 i))] (mod 99999999 7))
@@ -32,19 +39,20 @@
     (debug (concat "meta: " (str (getmeta me "post"))))
     key))                                   // Returns the hash key of the new post to the calling function
 
-(expose "getPostsBy" STRING)
+(expose "getPostsBy" HC_STRING)
 (defn getPostsBy [userAddress]
   (let [posts (getmeta userAddress "post")] // From the DHT, gets all "post" metadata entries linked from this userAddress
                                             // TODO add "last 10" or "since timestamp" when query info is supported
 
     (debug (str posts))                     // Sends result to debug output
+    (debug (hget posts %result))
+    (debug (str (hget (hget (aget (unjson (raw (hget posts %result))) 0) %E) %C)))
+    (hget posts %result)))                                 // Returns an array of posts
 
-    posts))                                 // Returns an array of posts
-
-(expose "newHandle" STRING)
+(expose "newHandle" HC_STRING)
 (defn newHandle [handle]
   (let [key (commit "handle" handle)        // On my source chain, commits a new handle entry
-        me  Agent_Hash]
+        me  App_Agent_Hash]
     (put key)                               // On the DHT, puts the new handle (via sending hash)
                                             // TODO confirm no collision before next step
     // (getmeta me "handle")                // On the DHT, get on my hash the link marked "handle"
@@ -61,15 +69,15 @@
 // GENESIS - Called only when your source chain is generated:'hc gen chain <name>'
 // ===============================================================================
 (defn genesis []                            // 'hc gen chain' calls the genesis function in every zome file for the app
-  (letseq [handle Agent_String]             // Looks up the string (usually email) I used with 'hc init' to identify myself and assigns it to 'handle'
+  (letseq [handle App_Agent_String             // Looks up the string (usually email) I used with 'hc init' to identify myself and assigns it to 'handle'
            key (commit "handle" handle)]    // On my source chain, commits my handle for the first time and assigns its hash to 'key'
-    (put (property Agent_Hash))            // On the DHT, puts the hash of my genesis identity entry (init string, public keys, etc.)
+//    (put (property App_Agent_Hash))            // On the DHT, puts the hash of my genesis identity entry (init string, public keys, etc.)
                                             // I.e., this announces myself to the network
-    (for [(def i 0) (< i 20000) (def i (+ 1 i))]
-      (mod 99999999 7))
-    (debug (concat "genesis Agent_Hash: " (str (get Agent_Hash)))
-    (put key)                               // On the DHT, puts my handle string via its hash
-    (putmeta Agent_Hash key "handle") // On the DHT, puts a link on my hash address to my handle text
+//    (for [(def i 0) (< i 20000) (def i (+ 1 i))]
+//      (mod 99999999 7))
+//    (debug (concat "genesis App_Agent_Hash: " (str (get App_Agent_Hash)))
+//    (put key)                               // On the DHT, puts my handle string via its hash
+//    (putmeta App_Agent_Hash key "handle") // On the DHT, puts a link on my hash address to my handle text
     true))
 
 // ===============================================================================

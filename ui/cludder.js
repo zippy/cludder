@@ -1,8 +1,8 @@
-var Clutter = {posts:{},users:{},follows:{},nick:""};
+var Cludder = {posts:{},users:{},follows:{},nick:""};
 
 function send(fn,data,resultFn) {
     $.post(
-        "/fn/clutter/"+fn,
+        "/fn/cludder/"+fn,
         JSON.stringify(data),
         function(response) {
             resultFn(JSON.parse(response));
@@ -15,7 +15,7 @@ function send(fn,data,resultFn) {
 
 function getProfile() {
     send("get",{what:"nick"},function(data) {
-        Clutter.nick = data;
+        Cludder.nick = data;
         $("#nick").html(data);
         getPosts(data);
     });
@@ -29,9 +29,9 @@ function addPost() {
     };
     send("addPost",post,function(data) {
         post.key = data; // save the key of our post to the post
-        post.nick = Clutter.nick;
+        post.nick = Cludder.nick;
         var id = cachePost(post);
-        $("#meows").prepend(makePostHTML(id,post,Clutter.nick));
+        $("#meows").prepend(makePostHTML(id,post,Cludder.nick));
     });
 }
 
@@ -70,7 +70,7 @@ function getUsers() {
         for (var i = 0, len = arr.length; i < len; i++) {
             var user = JSON.parse(arr[i].C);
             // don't cache yourself!
-            if (user.nick != Clutter.nick) {
+            if (user.nick != Cludder.nick) {
                 cacheUser(user);
             }
         }
@@ -88,24 +88,24 @@ function getFollows(w) {
 
 function cachePost(p,nick) {
     var id = p.stamp.toString()+nick;
-    Clutter.posts[id] = p;
+    Cludder.posts[id] = p;
     return id;
 }
 
 function cacheUser(u) {
-    Clutter.user[u.nick] = u;
+    Cludder.user[u.nick] = u;
 }
 
 function cacheFollow(f) {
-    Clutter.follows[f.whom] = f;
+    Cludder.follows[f.whom] = f;
 }
 
 function displayPosts() {
     var keys = [],
     k, i, len;
 
-    for (k in Clutter.posts) {
-        if (Clutter.posts.hasOwnProperty(k)) {
+    for (k in Cludder.posts) {
+        if (Cludder.posts.hasOwnProperty(k)) {
             keys.push(k);
         }
     }
@@ -117,7 +117,7 @@ function displayPosts() {
     $("#meows").html("");
     for (i = 0; i < len; i++) {
         k = keys[i];
-        var post = Clutter.posts[k];
+        var post = Cludder.posts[k];
         $("#meows").append(makePostHTML(k,post));
     }
 }

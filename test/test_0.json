@@ -1,11 +1,27 @@
 [
   {
     "Zome": "cludder",
-    "FnName": "getProperty",
-    "Input": "_agent_name",
+    "FnName": "appProperty",
+    "Input": "App_DNA_Hash",
     "Output": "",
     "Err": "",
-    "Regexp": "[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z]+"
+    "Regexp": "Qm[a-zA-Z0-9]*"
+  },
+  {
+    "Zome": "cludder",
+    "FnName": "appProperty",
+    "Input": "garbage",
+    "Output": "Error: No App Property with name: garbage",
+    "Err": "",
+    "Regexp": ""
+  },
+  {
+    "Zome": "cludder",
+    "FnName": "getProperty",
+    "Input": "description",
+    "Output": "",
+    "Err": "",
+    "Regexp": "[a-z]{2,3}"
   },
   {
     "Zome": "cludder",
@@ -33,8 +49,8 @@
   },
   {
     "Zome": "cludder",
-    "FnName": "getProperty",
-    "Input": "_id",
+    "FnName": "appProperty",
+    "Input": "App_Agent_Hash",
     "Output": "",
     "Err": "",
     "Regexp": "Qm[a-zA-Z0-9]*"
@@ -43,7 +59,7 @@
     "Zome":   "cludder",
     "FnName": "getPostsBy",
     "Input":  "%r1%",
-    "Output": "here is a test post",
+    "Output": "[{\"E\":{\"C\":\"here is a test post\"},\"H\":\"%h%\"}]",
     "Err": "",
     "Regexp": ""
   }
