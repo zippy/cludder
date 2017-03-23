@@ -26,8 +26,8 @@
     // (delmeta me userAddress "following") // Marks the given following link on my hash as deleted
     ))
 
-(expose "addPost" HC_STRING)
-(defn addPost [postBody]
+(expose "post" HC_STRING)
+(defn post [postBody]
   (let [key (commit "post" postBody)        // Commits the post block to my source chain, assigns resulting hash to 'key'
         me  App_Agent_Hash]
     (put key)                               // On the DHT, puts the new post via its hash,
