@@ -4,7 +4,7 @@
   (property name))                  // Retrieves a property of the holochain from the DNA (e.g., Name, Language)
 
 (expose "appProperty" HC_STRING)
-(defn appProperty [name]            // The definition of the function you intend to expose
+(defn appProperty [name]
   (cond (== name "App_Agent_Hash")   App_Agent_Hash
         (== name "App_Agent_String") App_Agent_String
         (== name "App_DNA_Hash")     App_DNA_Hash
@@ -47,7 +47,7 @@
 
     (debug (str posts))                     // Sends result to debug output
     //(debug (hget posts %result))
-    (debug (str (hget (hget (aget (unjson (raw (hget posts %result))) 0) %E) %C)))
+    (debug (concat "getPostsBy returning JSON: " (str (hget (hget (aget (unjson (raw (hget posts %result))) 0) %E) %C))))
     (hget posts %result)))                                 // Returns an array of posts
 
 (expose "newHandle" HC_STRING)
