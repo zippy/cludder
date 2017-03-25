@@ -1,4 +1,5 @@
-var Cludder = {posts:{},users:{},follows:{},nick:""};
+var cache = {posts:{},users:{},follows:{}}
+var me = {nick:""}
 
 function send(fn,data) {
     var result;
@@ -8,10 +9,11 @@ function send(fn,data) {
     return result;
 };
 
+var App = {Agent:{Hash:send("appProperty", "App_Agent_Hash")}};
+
 function getProfile() {
-    Cludder.me = send("appProperty", "App_Agent_Hash")
-    Cludder.nick = send("getHandle", Cludder.me);
-    $("#nick").html(Cludder.nick);
+    me.nick = send("getHandle", App.Agent.Hash);
+    $("#nick").html(me.nick);
     getMyPosts();
 }
 
@@ -23,10 +25,10 @@ function addPost() {
     };
     data = send("post",post)
     post.key = data; // save the key of our post to the post
-    post.nick = Cludder.nick;
+    post.nick = me.nick;
     id = post.stamp.toString()+nick;
-    Cludder.posts[id] = post;
-    $("#meows").prepend(makePostHTML(id,post,Cludder.nick));
+    cache.posts[id] = post;
+    $("#meows").prepend(makePostHTML(id,post,me.nick));
 }
 
 function follow(w) {
@@ -47,7 +49,7 @@ function makeUserHTML(user) {
 }
 
 function getMyPosts() {
-    getPosts(Cludder.me)
+    getPosts(App.Agent.Hash)
 }
 
 function getPosts(by) {
@@ -59,7 +61,7 @@ function getPosts(by) {
         var post = posts[i].E.C;
         post.nick = send("getHandle", by)
         id = post.stamp.toString()+nick;
-        Cludder.posts[id] = post;
+        cache.posts[id] = post;
         displayPosts();
     }
 }
@@ -69,7 +71,7 @@ function getUsers() {
     for (var i = 0, len = arr.length; i < len; i++) {
         var user = JSON.parse(arr[i].C);
         // don't cache yourself!
-        if (user.nick != Cludder.nick) {
+        if (user.nick != me.nick) {
             cacheUser(user);
         }
     }
@@ -84,19 +86,19 @@ function getFollows(w) {
 }
 
 function cacheUser(u) {
-    Cludder.user[u.nick] = u;
+    cache.users[u.nick] = u;
 }
 
 function cacheFollow(f) {
-    Cludder.follows[f.whom] = f;
+    cache.follows[f.whom] = f;
 }
 
 function displayPosts() {
     var keys = [],
     k, i, len;
 
-    for (k in Cludder.posts) {
-        if (Cludder.posts.hasOwnProperty(k)) {
+    for (k in cache.posts) {
+        if (cache.posts.hasOwnProperty(k)) {
             keys.push(k);
         }
     }
@@ -108,7 +110,7 @@ function displayPosts() {
     $("#meows").html("");
     for (i = 0; i < len; i++) {
         k = keys[i];
-        var post = Cludder.posts[k];
+        var post = cache.posts[k];
         $("#meows").append(makePostHTML(k,post));
     }
 }
