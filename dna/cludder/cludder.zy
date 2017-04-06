@@ -1,16 +1,13 @@
-// Exposes a function to the UI so it can be called via localhost, web browser, or socket
-(expose "getProperty" HC_STRING)
+// These are the Exposed a functions which are visible to the UI so it can be called via localhost, web browser, or socket
 (defn getProperty [name]            // The definition of the function you intend to expose
   (property name))                  // Retrieves a property of the holochain from the DNA (e.g., Name, Language)
 
-(expose "appProperty" HC_STRING)
 (defn appProperty [name]            // The definition of the function you intend to expose
   (cond (== name "App_Agent_Hash")   App_Agent_Hash
         (== name "App_Agent_String") App_Agent_String
         (== name "App_DNA_Hash")     App_DNA_Hash
         (concat "Error: No App Property with name: " name)))
 
-(expose "follow" HC_STRING)
 (defn follow [userAddress]
   // Expects a userAddress hash of the person you want to follow
   (let [me App_Agent_Hash]          // Looks up my hash address and assign it to 'me'
@@ -18,7 +15,6 @@
     (putmeta userAddress me "follower")     // On the DHT, puts a link on their hash to my hash as a "follower"
     (putmeta me userAddress "following")))  // On the DHT, puts a link on my hash to their hash as a "following"
 
-(expose "unfollow" HC_STRING)
 (defn unfollow [userAddress]
   (let [me App_Agent_Hash]
     (commit "unfollow" userAddress)         // On my source chain, commits the unfollow entry
@@ -26,11 +22,9 @@
     // (delmeta me userAddress "following") // Marks the given following link on my hash as deleted
     ))
 
-(expose "post" HC_STRING)
 (defn post [postBody]
   (let [key (commit "post" postBody)        // Commits the post block to my source chain, assigns resulting hash to 'key'
         me  App_Agent_Hash]
-    (put key)                               // On the DHT, puts the new post via its hash,
                                             // which DHT nodes will use to request validation info from my source chain
 //    (for [(def i 0) (< i 20000) (def i (+ 1 i))] (mod 99999999 7))
 //    (debug (concat "post text: " (str (get key))))
@@ -40,7 +34,6 @@
     (debug key)
     key))                                   // Returns the hash key of the new post to the calling function
 
-(expose "getPostsBy" HC_STRING)
 (defn getPostsBy [userAddress]
   (let [posts (getmeta userAddress "post")] // From the DHT, gets all "post" metadata entries linked from this userAddress
                                             // TODO add "last 10" or "since timestamp" when query info is supported
@@ -50,18 +43,15 @@
     (debug (str (hget (hget (aget (unjson (raw (hget posts %result))) 0) %E) %C)))
     (hget posts %result)))                                 // Returns an array of posts
 
-(expose "newHandle" HC_STRING)
 (defn newHandle [handle]
   (let [key (commit "handle" handle)        // On my source chain, commits a new handle entry
         me  App_Agent_Hash]
-    (put key)                               // On the DHT, puts the new handle (via sending hash)
                                             // TODO confirm no collision before next step
     (putmeta key me "handle")
     // (getmeta me "handle")                // On the DHT, get on my hash the link marked "handle"
     // (modmeta me "handle" key)            // On the DHT, mark my old handle as deprecated
     key))
 
-(expose "getHandle" HC_STRING)
 (defn getHandle [user_hash]
   (getmeta user_hash "handle"))
 
@@ -91,7 +81,13 @@
 //     Every DHT node uses their own copy of these functions to validate
 //     any and all changes requested before accepting. put / mod / del & metas
 // ===============================================================================
-(defn validate [entryType entryData entryProperties]
+(defn validateCommit [entryType entry header sources]
+  (validate entryType entry header sources))
+(defn validatePut [entryType entry header sources]
+  (validate entryType entry header sources))
+(defn validateLink [linkEntryType baseHash linkHash tag sources] true)
+
+(defn validate [entryType entryData header sources]
   true)
 //  (cond
 //    (== entryType "handle") (true)
@@ -114,6 +110,7 @@
 //      (true))
 //    (true)
 //    )
+
 
 // (defn validatePutMeta [base-Hash metaTag entryType entryData entryProperties]
 // Are there types of tags that you need special permission to do put?
