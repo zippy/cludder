@@ -59,7 +59,7 @@
     "Zome":   "cludder",
     "FnName": "getPostsBy",
     "Input":  "%r1%",
-    "Output": "[{\"E\":{\"C\":\"here is a test post\"},\"H\":\"%h%\"}]",
+      "Output": "[{\"Atype\":\"hash\", \"post\":\"\\\"here is a test post\\\"\", \"H\":\"%h%\", \"zKeyOrder\":[\"post\", \"H\"]}]",
     "Err": "",
     "Regexp": ""
   }

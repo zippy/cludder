@@ -42,6 +42,7 @@ RequiresVersion = 5
   [[Zomes.Entries]] # Someone's username
     Name = "handle"
     DataFormat = "string"
+    Sharing = "public"
     Schema = ""                     # Link to schema filename (unused for string DataFormat)
     [Zomes.Entries.SchemaHash]
           # If the DataFormat for handles were "json" instead of a string, the hash (H) of the JSON schema file would go here
@@ -49,20 +50,25 @@ RequiresVersion = 5
   [[Zomes.Entries]] # A post
     Name = "post"
     DataFormat = "string"
+    Sharing = "public"
     Schema = ""
     [Zomes.Entries.SchemaHash]
+
+  [[Zomes.Entries]]
+    Name = "post_links"
+    DataFormat = "links"
+
+  [[Zomes.Entries]]
+    Name = "handle_links"
+    DataFormat = "links"
 
   [[Zomes.Entries]]    # Contains the user address (hash) of the person you want to follow
     Name = "follow"
-    DataFormat = "string"
-    Schema = ""
-    [Zomes.Entries.SchemaHash]
+    DataFormat = "links"
 
   [[Zomes.Entries]]    # Contains the user address (hash) of the person you want to follow
     Name = "unfollow"
-    DataFormat = "string"
-    Schema = ""
-    [Zomes.Entries.SchemaHash]
+    DataFormat = "links"
 
   # This is the list of exposed functions, see dna/cludder/cludder.zy for the functions themselves
   [[Zomes.Functions]]    
