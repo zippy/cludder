@@ -45,30 +45,35 @@
     (debug key)
     key))                                   // Returns the hash key of the new post to the calling function
 
+// Helper function to do getlink call and handle the no-link error case
+(defn doGetLink [base tag]
+  // get the tag from the base in the DHT
+  (letseq [raw_links (getlink base tag)
+           linksjson (hget raw_links %result "[]") // default to empty list
+           links (unjson (raw linksjson))
+           links_filled (map (fn [x]
+                                (let [hash (hget x %H)]
+                                     (hash (str2sym tag) (hget (get hash) %result) H:hash)))
+                   links)
+          ]
+          (debug (concat "Raw Links:" (str raw_links)))
+          (debug (concat "Links Filled:" (str links_filled)))
+          links_filled
+  )
+)
+
+// TODO add "last 10" or "since timestamp" when query info is supported
 (defn getPostsBy [userAddress]
-
-// TODO: error checking sometimes getlink returns error not list
-
-  (let [posts (unjson (raw (hget (getlink userAddress "post") %result)))] // From the DHT, gets all "post" metadata entries linked from this userAddress
-                                            // TODO add "last 10" or "since timestamp" when query info is supported
-
-    (debug (concat "getlink results:" (str posts)))                     // Sends result to debug output
-
-//(debug (str (hget (hget (aget (unjson (raw (hget posts %result))) 0) %E) %C)))
-                                     // Returns an array of posts
-     (let [p
-     (map (fn [x] (let [hash (hget x %H)] (hash post:(hget (get hash) %result) H:hash))) posts)]
-     (debug "POSTS:")
-     (debug (str p))
-     (json p)))
-    )
+  // From the DHT, gets all "post" metadata entries linked from this userAddress
+  (json (doGetLink userAddress "post"))
+)
 
 (defn newHandle [handle]
   (let [key (commit "handle" handle)        // On my source chain, commits a new handle entry
         me  App_Agent_Hash]
                                             // TODO confirm no collision before next step
       (commit "handle_links" (hash Links:[
-              (hash Base:key Link:me Tag:"handle")
+              (hash Base:me Link:key Tag:"handle")
             ]))
 
     // (getlink me "handle")                // On the DHT, get on my hash the link marked "handle"
@@ -76,7 +81,7 @@
     key))
 
 (defn getHandle [user_hash]
-  (getlink user_hash "handle"))
+  (json (doGetLink user_hash "handle")))
 
 // ==============================================================================
 // CALLBACKS: Called by back-end system, instead of front-end app or UI
