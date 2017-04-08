@@ -25,6 +25,14 @@
   },
   {
     "Zome": "cludder",
+    "FnName": "getHandle",
+    "Input": "%agent%",
+    "Output": "%agentstr%",
+    "Err": "",
+    "Regexp": ""
+  },
+  {
+    "Zome": "cludder",
     "FnName": "newHandle",
     "Input": "buffaloBill",
     "Output": "%h1%",
@@ -35,7 +43,7 @@
     "Zome": "cludder",
     "FnName": "getHandle",
     "Input": "%agent%",
-    "Output": "fixme",
+    "Output": "buffaloBill",
     "Err": "",
     "Regexp": ""
   },

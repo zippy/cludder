@@ -81,7 +81,12 @@
     key))
 
 (defn getHandle [user_hash]
-  (json (doGetLink user_hash "handle")))
+  (letseq [handles (doGetLink user_hash "handle")
+           n (- (len handles) 1)
+           h (aget handles n)
+           ]
+           (cond (>= n 0) (unjson (raw (hget h %handle)))
+                 "")))
 
 // ==============================================================================
 // CALLBACKS: Called by back-end system, instead of front-end app or UI
