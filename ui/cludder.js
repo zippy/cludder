@@ -69,7 +69,7 @@ function getPosts(by) {
         console.log("arr: " + JSON.stringify(arr))
         for (var i = 0, len = arr.length; i < len; i++) {
             console.log("arr[i]: " + JSON.stringify(arr[i]))
-            var post = arr[i].E.C;
+            var post = arr[i].post;
             post.nick = send("getHandle", by, function(author_handle) {
                 return author_handle;
             })

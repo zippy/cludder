@@ -3,9 +3,9 @@
     "Zome": "cludder",
     "FnName": "appProperty",
     "Input": "App_DNA_Hash",
-    "Output": "",
+    "Output": "%dna%",
     "Err": "",
-    "Regexp": "Qm[a-zA-Z0-9]*"
+    "Regexp": ""
   },
   {
     "Zome": "cludder",
@@ -25,9 +25,9 @@
   },
   {
     "Zome": "cludder",
-    "FnName": "newHandle",
-    "Input": "buffaloBill",
-    "Output": "%h%",
+    "FnName": "getHandle",
+    "Input": "%agent%",
+    "Output": "%agentstr%",
     "Err": "",
     "Regexp": ""
   },
@@ -35,7 +35,23 @@
     "Zome": "cludder",
     "FnName": "newHandle",
     "Input": "buffaloBill",
-    "Output": "%h%",
+    "Output": "%h1%",
+    "Err": "",
+    "Regexp": ""
+  },
+  {
+    "Zome": "cludder",
+    "FnName": "getHandle",
+    "Input": "%agent%",
+    "Output": "buffaloBill",
+    "Err": "",
+    "Regexp": ""
+  },
+  {
+    "Zome":   "cludder",
+    "FnName": "getPostsBy",
+    "Input":  "%r2%",
+    "Output": "[]",
     "Err": "",
     "Regexp": ""
   },
@@ -43,7 +59,7 @@
     "Zome": "cludder",
     "FnName": "post",
     "Input": "here is a test post",
-    "Output": "%h%",
+    "Output": "%h1%",
     "Err": "",
     "Regexp": ""
   },
@@ -59,7 +75,7 @@
     "Zome":   "cludder",
     "FnName": "getPostsBy",
     "Input":  "%r1%",
-    "Output": "[{\"E\":{\"C\":\"here is a test post\"},\"H\":\"%h%\"}]",
+      "Output": "[{\"Atype\":\"hash\", \"post\":\"\\\"here is a test post\\\"\", \"H\":\"%h1%\", \"zKeyOrder\":[\"post\", \"H\"]}]",
     "Err": "",
     "Regexp": ""
   }
