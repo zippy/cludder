@@ -42,7 +42,7 @@ RequiresVersion = 5
   [[Zomes.Entries]] # Someone's username
     Name = "handle"
     DataFormat = "string"
-    Sharing = "public"
+    Sharing = "public"              # Automatically published to DHT after committing to chain
     Schema = ""                     # Link to schema filename (unused for string DataFormat)
     [Zomes.Entries.SchemaHash]
           # If the DataFormat for handles were "json" instead of a string, the hash (H) of the JSON schema file would go here
@@ -56,7 +56,7 @@ RequiresVersion = 5
 
   [[Zomes.Entries]]
     Name = "post_links"
-    DataFormat = "links"
+    DataFormat = "links"             # Special "meta-tag" that links one DHT entry to another. You could think of this like RDF graph stuff.
 
   [[Zomes.Entries]]
     Name = "handle_links"
