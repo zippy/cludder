@@ -41,19 +41,20 @@
             ]))
 
 //    (for [(def i 0) (< i 20000) (def i (+ 1 i))] (mod 99999999 7))
-    (debug (concat "meta: " (str (getlink me "post"))))
+    (debug (concat "meta: " (str (getLink me "post" (hash Load:true)))))
     (debug key)
     key))                                   // Returns the hash key of the new post to the calling function
 
-// Helper function to do getlink call and handle the no-link error case
+// Helper function to do getLink call and handle the no-link error case
 (defn doGetLink [base tag]
   // get the tag from the base in the DHT
-  (letseq [raw_links (getlink base tag)
-           linksjson (hget raw_links %result "[]") // default to empty list
+  (letseq [raw_links (getLink base tag (hash Load:true))
+           // default to empty list (when result empty because of error
+           linksjson (hget raw_links %result "[]")
            links (unjson (raw linksjson))
            links_filled (map (fn [x]
                                 (let [hash (hget x %H)]
-                                     (hash (str2sym tag) (hget (get hash) %result) H:hash)))
+                                     (hash (str2sym tag) (hget x %E)  H:hash)))
                    links)
           ]
           (debug (concat "Raw Links:" (str raw_links)))
@@ -76,7 +77,7 @@
               (hash Base:me Link:key Tag:"handle")
             ]))
 
-    // (getlink me "handle")                // On the DHT, get on my hash the link marked "handle"
+    // (getLink me "handle")                // On the DHT, get on my hash the link marked "handle"
     // (modmeta me "handle" key)            // On the DHT, mark my old handle as deprecated
     key))
 
@@ -85,7 +86,7 @@
            n (- (len handles) 1)
            h (aget handles n)
            ]
-           (cond (>= n 0) (unjson (raw (hget h %handle)))
+           (cond (>= n 0) (hget h %handle)
                  "")))
 
 // ==============================================================================
@@ -105,11 +106,10 @@
 //     Every DHT node uses their own copy of these functions to validate
 //     any and all changes requested before accepting. put / mod / del & metas
 // ===============================================================================
-(defn validateCommit [entryType entry header sources]
+(defn validateCommit [entryType entry header pkg sources]
   (validate entryType entry header sources))
-(defn validatePut [entryType entry header sources]
+(defn validatePut [entryType entry header pkg sources]
   (validate entryType entry header sources))
-(defn validateLink [linkEntryType baseHash linkHash tag sources] true)
 
 (defn validate [entryType entryData header sources]
 //  (cond
@@ -134,32 +134,34 @@
     true
     )
 
-
-// (defn validatePutMeta [base-Hash metaTag entryType entryData entryProperties]
+(defn validateLink [linkEntryType baseHash links pkg sources] true)
 // Are there types of tags that you need special permission to do put?
 // Examples: Only Bob should be able to make Bob a "follower" of Alice
 //   - Only Bob should be able to list Alice in his people he is "following"
 //  true)
+// need always to check 
 
-// (defn validateMod [entryType entryData entryProperties]
-//  true)
+(defn validateMod [entryType hash newHash pkg sources] true)
+
 
 // (defn validateModMeta [base-Hash metaTag entryType entryData entryProperties]
 // For example, check whether the edit request came from the creator of the data being edited
 //  true)
 
-// (defn validateDel [entryType entryData entryProperties]
-//  true)
-
-// (defn validateDelMeta [base-Hash metaTag entryType entryData entryProperties]
-//  For example, check whether the delete request came from the creator of the data being deleted
-//  true)
+(defn validateDel [entryType hash pkg sources] true)
 
 // ===============================================================================
 //   PACKAGING functions for *EVERY* validation call for DHT entry
 //     What data needs to be sent for each above validation function?
 //     Default: send and sign the chain entry that matches requested HASH
 // ===============================================================================
+
+(defn validatePutPkg [entryType] nil)
+(defn validateModPkg [entryType] nil)
+(defn validateDelPkg [entryType] nil)
+(defn validateLinkPkg [entryType] nil)
+
+
 (defn confirmSource [command hashKey]
   true)
 

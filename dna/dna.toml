@@ -49,7 +49,7 @@ RequiresVersion = 5
 
   [[Zomes.Entries]] # A post
     Name = "post"
-    DataFormat = "string"
+    DataFormat = "json"
     Sharing = "public"
     Schema = ""
     [Zomes.Entries.SchemaHash]

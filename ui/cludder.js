@@ -30,7 +30,7 @@ function addPost() {
         message:$('#meow').val(),
         stamp: now.valueOf()
     };
-    send("post",post,function(data) {
+    send("post",JSON.stringify(post),function(data) {
         post.key = data; // save the key of our post to the post
         post.nick = Cludder.nick;
         var id = cachePost(post);
@@ -65,17 +65,21 @@ function getMyPosts() {
 
 function getPosts(by) {
     send("getPostsBy",by,function(arr) {
-        arr = JSON.parse(arr)
-        console.log("arr: " + JSON.stringify(arr))
-        for (var i = 0, len = arr.length; i < len; i++) {
-            console.log("arr[i]: " + JSON.stringify(arr[i]))
-            var post = arr[i].post;
-            post.nick = send("getHandle", by, function(author_handle) {
-                return author_handle;
-            })
-            var id = cachePost(post);
-            displayPosts();
-//            $("#meows").prepend(makePost(id,post));
+
+        arr = JSON.parse(arr);
+        console.log("arr: " + JSON.stringify(arr));
+        var len = len = arr.length;
+        if (len > 0) {
+            send("getHandle", by, function(author_handle) {
+                for (var i = 0; i < len; i++) {
+                    console.log("arr[i]: " + JSON.stringify(arr[i]));
+                    var post = JSON.parse(arr[i].post);
+                    post.nick = author_handle;
+                    var id = cachePost(post);
+                    displayPosts();
+                    //            $("#meows").prepend(makePost(id,post));
+                }
+            });
         }
     });
 }
@@ -101,8 +105,9 @@ function getFollows(w) {
     });
 }
 
-function cachePost(p,nick) {
-    var id = p.stamp.toString()+nick;
+function cachePost(p) {
+    console.log("Caching:"+JSON.stringify(p))
+    var id = p.stamp.toString()+p.nick;
     Cludder.posts[id] = p;
     return id;
 }
