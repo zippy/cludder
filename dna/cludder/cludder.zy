@@ -71,10 +71,17 @@
 
 (defn newHandle [handle]
   (let [key (commit "handle" handle)        // On my source chain, commits a new handle entry
-        me  App_Agent_Hash]
-                                            // TODO confirm no collision before next step
+        me  App_Agent_Hash
+        directory App_DNA_Hash              // placeholder till we can calculate a hash
+        ]
+        // TODO confirm no collision before next step
       (commit "handle_links" (hash Links:[
               (hash Base:me Link:key Tag:"handle")
+            ]))
+        
+
+      (commit "handle_links" (hash Links:[
+              (hash Base:directory Link:me Tag:handle)
             ]))
 
     // (getLink me "handle")                // On the DHT, get on my hash the link marked "handle"
@@ -99,6 +106,7 @@
   (begin
     // use the agent string (usually email) used with 'hc init' to identify myself and create a new handle
     (newHandle App_Agent_String)
+//    (commit "anchor" (hash type:"sys" value:"directory")))
     true))
 
 // ===============================================================================

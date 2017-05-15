@@ -47,11 +47,18 @@ RequiresVersion = 5
     [Zomes.Entries.SchemaHash]
           # If the DataFormat for handles were "json" instead of a string, the hash (H) of the JSON schema file would go here
 
+  [[Zomes.Entries]] # Anchor type, for creating the user directory and hash-tags
+    Name = "anchor"
+    DataFormat = "json"
+    Sharing = "public"              # Automatically published to DHT after committing to chain
+    Schema = "anchor.json"   # Link to schema filename
+    [Zomes.Entries.SchemaHash]
+
   [[Zomes.Entries]] # A post
     Name = "post"
     DataFormat = "json"
     Sharing = "public"
-    Schema = ""
+    Schema = "post.json"
     [Zomes.Entries.SchemaHash]
 
   [[Zomes.Entries]]

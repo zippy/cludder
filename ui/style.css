@@ -491,3 +491,20 @@ summary {
 	background-color: rgba(0, 0, 0, 0.6);
 	border-radius: 10px;
 }
+.closer {
+  float:right;
+}
+.results-tab {
+  display:inline-block;
+  background-color:green;
+}
+.active-tab {
+  background-color:white;
+  color:green;
+}
+
+.search-results-data {
+    background-color: lightgray;
+    color: black;
+    padding: 4px;
+}
