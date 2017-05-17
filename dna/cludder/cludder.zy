@@ -49,8 +49,8 @@
     (debug key)
     key))                                   // Returns the hash key of the new post to the calling function
 
-// Helper function to do getLink call and handle the no-link error case
-(defn doGetLink [base tag]
+// Helper function to do getLink call, handle the no-link error case, and copy the returned entry values into a nicer array
+(defn doGetLinkLoad [base tag]
   // get the tag from the base in the DHT
   (letseq [raw_links (getLink base tag (hash Load:true))
            // default to empty list (when result empty because of error
@@ -67,11 +67,35 @@
   )
 )
 
+// helper function to call getLinks, handle the no links entry error, and build a simpler links array.
+(defn doGetLink [base tag]
+  (letseq [raw_links (getLink base tag)
+           linksjson (hget raw_links %result "[]")
+           links (unjson (raw linksjson))
+           ]
+           (map (fn [x] (hget x %H)) links)
+           )
+)
+
 // TODO add "last 10" or "since timestamp" when query info is supported
 (defn getPostsBy [userAddress]
   // From the DHT, gets all "post" metadata entries linked from this userAddress
-  (json (doGetLink userAddress "post"))
+  (json (doGetLinkLoad userAddress "post"))
 )
+
+// get a list of all the people from the DHT a user is following or follows
+(defn getFollow [params]
+  (let [type (hget params %type)
+        base (hget params %from)
+        result (hash)
+        ]
+       (cond (or (== type "follows") (== type "following"))
+             (hset result %result (doGetLink base type))
+             (hset result %error (concat "bad type: " type)))
+       result
+       )
+)
+
 
 (defn newHandle [handle]
   (let [key (commit "handle" handle)        // On my source chain, commits a new handle entry
@@ -95,7 +119,7 @@
 
 // returns the handle of an agent by looking it up on the user's DHT entry, the last handle will be the current one?
 (defn getHandle [user_hash]
-  (letseq [handles (doGetLink user_hash "handle")
+  (letseq [handles (doGetLinkLoad user_hash "handle")
            n (- (len handles) 1)
            h (aget handles n)
            ]

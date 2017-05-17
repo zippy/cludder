@@ -1,4 +1,4 @@
-var Cludder = {posts:{},users:{},follows:{},handle:"",me:""};
+var Cludder = {posts:{},users:{},handles:{},follows:{},handle:"",me:""};
 
 function send(fn,data,resultFn) {
     $.post(
@@ -14,8 +14,17 @@ function send(fn,data,resultFn) {
     ;
 };
 
+function getHandle(who,fn) {
+    send("getHandle",who,function(data) {
+        cacheUser({handle:data,hash:who});
+        if (fn!=undefined) {
+            fn(data);
+        }
+    });
+}
+
 function getMyHandle(fn) {
-    send("getHandle",Cludder.me,function(data) {
+    getHandle(Cludder.me,function(data){
         Cludder.handle = data;
         $("#handle").html(data);
         if (fn!=undefined) {
@@ -24,10 +33,25 @@ function getMyHandle(fn) {
     });
 }
 
+function getFollow(who,type) {
+    send("getFollow",JSON.stringify({from:who,type:type}),function(data) {
+        var j =  JSON.parse(data);
+        var following = j.result;
+        if (following != undefined) {
+
+            var len = following.length;
+            for (var i = 0; i < len; i++) {
+                cacheFollow(following[i]);
+            }
+        }
+    });
+}
+
 function getProfile() {
     send("appProperty","App_Key_Hash", function(me) {
         Cludder.me = me;
         getMyHandle(getMyPosts);
+        getFollow(me,"following");
     });
 }
 
@@ -46,12 +70,8 @@ function addPost() {
 }
 
 function follow(w) {
-    var follow = {
-        whom:w
-    };
     send("follow",w,function(data) {
-        follow.key = data; // save the key of our follow
-        var id = cacheFollow(follow);
+        cacheFollow(w);
     });
 }
 
@@ -83,7 +103,7 @@ function getPosts(by) {
         // add it to the posts objects before caching.
         var len = len = arr.length;
         if (len > 0) {
-            send("getHandle", by, function(author_handle) {
+            var postsFn = function(author_handle) {
                 for (var i = 0; i < len; i++) {
                     console.log("arr[i]: " + JSON.stringify(arr[i]));
                     var post = JSON.parse(arr[i].post);
@@ -92,28 +112,14 @@ function getPosts(by) {
                     displayPosts();
                     //            $("#meows").prepend(makePost(id,post));
                 }
-            });
-        }
-    });
-}
-
-function getUsers() {
-    send("get",{what:"users"},function(arr) {
-        for (var i = 0, len = arr.length; i < len; i++) {
-            var user = JSON.parse(arr[i].C);
-            // don't cache yourself!
-            if (user.handle != Cludder.handle) {
-                cacheUser(user);
+            };
+            var user = Cludder.handles[by];
+            if (user == undefined) {
+                send("getHandle", by, postsFn);
             }
-        }
-    });
-}
-
-function getFollows(w) {
-    send("get",{what:"follows",whom:w},function(arr) {
-        for (var i = 0, len = arr.length; i < len; i++) {
-            var follow = JSON.parse(arr[i].C);
-            cacheFollow(follow);
+            else {
+                postsFn(user.handle);
+            }
         }
     });
 }
@@ -126,11 +132,35 @@ function cachePost(p) {
 }
 
 function cacheUser(u) {
-    Cludder.user[u.handle] = u;
+    Cludder.users[u.handle] = u;
+    Cludder.handles[u.hash] = u;
 }
 
 function cacheFollow(f) {
-    Cludder.follows[f.whom] = f;
+    console.log("caching: "+f);
+    Cludder.follows[f] = true;
+}
+
+function makeFollowingHTML(handle) {
+    return "<div class='handle'>"+handle+"</div>";
+}
+
+function displayFollowing() {
+    var handles = [];
+    var following = Object.keys(Cludder.follows);
+    var len = following.length;
+    for (var i = 0; i < len; i++) {
+        var user = Cludder.handles[following[i]];
+        if (user != undefined) {
+            handles.push(user.handle)
+        }
+    }
+    handles.sort();
+    $("#following").html("");
+    len = handles.length;
+    for (i = 0; i < len; i++) {
+        $("#following").append(makeFollowingHTML(handles[i]));
+    }
 }
 
 function displayPosts() {
@@ -210,6 +240,8 @@ function doSetHandle() {
 }
 
 function openFollow() {
+    $("#followHandle").val("");
+    displayFollowing();
     $('#followDialog').modal('show');
 }
 

@@ -95,6 +95,15 @@
         "Regexp": ""
     },
     {
+        "Convey":"getAgent request on non existent handle returns empty string",
+        "Zome": "cludder",
+        "FnName": "getAgent",
+        "Input": "fooHandle",
+        "Output": "",
+        "Err": "",
+        "Regexp": ""
+    },
+    {
         "Convey":"We can retrieve agent by handle",
         "Zome": "cludder",
         "FnName": "getAgent",
@@ -104,11 +113,29 @@
         "Regexp": ""
     },
     {
-        "Convey":"non existent handle return empty string",
+        "Convey":"We get an error for getFollow with bad following type",
         "Zome": "cludder",
-        "FnName": "getAgent",
-        "Input": "fooHandle",
-        "Output": "",
+        "FnName": "getFollow",
+        "Input": {"from":"%r1%","type":"foo"},
+        "Output": "{\"error\":\"bad type: foo\"}",
+        "Err": "",
+        "Regexp": ""
+    },
+    {
+        "Convey":"We can follow a user by agent hash",
+        "Zome": "cludder",
+        "FnName": "follow",
+        "Input": "%key%",
+        "Output": "%h%",
+        "Err": "",
+        "Regexp": ""
+    },
+    {
+        "Convey":"We can get following list",
+        "Zome": "cludder",
+        "FnName": "getFollow",
+        "Input": {"from":"%key%","type":"following"},
+        "Output": "{\"result\":[\"%key%\"]}",
         "Err": "",
         "Regexp": ""
     }
