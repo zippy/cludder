@@ -5,12 +5,16 @@
 (defn appProperty [name]            // The definition of the function you intend to expose
   (cond (== name "App_Agent_Hash")   App_Agent_Hash
         (== name "App_Agent_String") App_Agent_String
+        (== name "App_Key_Hash")     App_Key_Hash
         (== name "App_DNA_Hash")     App_DNA_Hash
         (concat "Error: No App Property with name: " name)))
 
+// use a local function to resolve which has will be used as "me"
+(defn getMe [] App_Key_Hash)
+
 (defn follow [userAddress]
   // Expects a userAddress hash of the person you want to follow
-  (let [me App_Agent_Hash]                  // Looks up my hash address and assign it to 'me'
+  (let [me (getMe)]                  // Looks up my hash address and assign it to 'me'
 
        // Commits a new follow entry to my source chain
        // On the DHT, puts a link on their hash to my hash as a "follower"
@@ -22,7 +26,7 @@
        ))
 
 (defn unfollow [userAddress]
-  (let [me App_Agent_Hash]
+  (let [me (getMe)]
     (commit "unfollow" userAddress)         // On my source chain, commits the unfollow entry
     // (delmeta userAddress me "follower")  // Marks the given follower link on their hash as deleted
     // (delmeta me userAddress "following") // Marks the given following link on my hash as deleted
@@ -30,7 +34,7 @@
 
 (defn post [postBody]
   (let [key (commit "post" postBody)        // Commits the post block to my source chain, assigns resulting hash to 'key'
-        me  App_Agent_Hash]
+        me (getMe)]
                                             // which DHT nodes will use to request validation info from my source chain
 //    (for [(def i 0) (< i 20000) (def i (+ 1 i))] (mod 99999999 7))
 //    (debug (concat "post text: " (str (get key))))
@@ -71,23 +75,25 @@
 
 (defn newHandle [handle]
   (let [key (commit "handle" handle)        // On my source chain, commits a new handle entry
-        me  App_Agent_Hash
+        me  App_Key_Hash
         directory App_DNA_Hash              // placeholder till we can calculate a hash
         ]
+      (debug (concat handle " is " key))
+
         // TODO confirm no collision before next step
       (commit "handle_links" (hash Links:[
               (hash Base:me Link:key Tag:"handle")
             ]))
         
-
       (commit "handle_links" (hash Links:[
-              (hash Base:directory Link:me Tag:handle)
+              (hash Base:directory Link:key Tag:"handle")
             ]))
 
-    // (getLink me "handle")                // On the DHT, get on my hash the link marked "handle"
+// (getLink me "handle")                // On the DHT, get on my hash the link marked "handle"
     // (modmeta me "handle" key)            // On the DHT, mark my old handle as deprecated
     key))
 
+// returns the handle of an agent by looking it up on the user's DHT entry, the last handle will be the current one?
 (defn getHandle [user_hash]
   (letseq [handles (doGetLink user_hash "handle")
            n (- (len handles) 1)
@@ -95,6 +101,19 @@
            ]
            (cond (>= n 0) (hget h %handle)
                  "")))
+
+// returns the agent associated agent by converting the handle to a hash
+// and getting that hash's source from the DHT
+(defn getAgent [handle]
+  (letseq [directory App_DNA_Hash
+           handleHash (makeHash handle)
+           handleEntry (get handleHash (hash GetMask:HC_GetMask_Sources))
+           sources (hget handleEntry %result [])
+           n (- (len sources) 1)
+           ]
+           (cond (>= n 0) (aget sources n)
+                 "")))
+
 
 // ==============================================================================
 // CALLBACKS: Called by back-end system, instead of front-end app or UI
