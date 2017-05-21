@@ -1,19 +1,5 @@
 var Cludder = {posts:{},users:{},handles:{},follows:{},handle:"",me:""};
 
-function send(fn,data,resultFn) {
-    $.post(
-        "/fn/cludder/"+fn,
-        data,
-        function(response) {
-            console.log("response: " + response);
-            resultFn(response);
-        }
-    ).error(function(response) {
-        console.log("response failed: " + response.responseText);
-    })
-    ;
-};
-
 function getHandle(who,fn) {
     send("getHandle",who,function(data) {
         cacheUser({handle:data,hash:who});

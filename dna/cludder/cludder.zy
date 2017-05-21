@@ -9,8 +9,12 @@
         (== name "App_DNA_Hash")     App_DNA_Hash
         (concat "Error: No App Property with name: " name)))
 
-// use a local function to resolve which has will be used as "me"
+// helper function to resolve which hash will be used as "me"
 (defn getMe [] App_Key_Hash)
+
+// currently we just use the DNA hash as our entry for linking the directory to
+// TODO commit an anchor entry explicitly for this purpose.
+(defn getDirectory [] App_DNA_Hash)
 
 (defn follow [userAddress]
   // Expects a userAddress hash of the person you want to follow
@@ -96,26 +100,50 @@
        )
 )
 
-
 (defn newHandle [handle]
+  (letseq [me (getMe)
+           directory (getDirectory)
+           handles (doGetLink me "handle")
+           n (- (len handles) 1)
+           ]
+          (cond (>= n 0)
+                (letseq [oldKey (aget handles n)
+                         key (update "handle" handle oldKey)
+                         ]
+                        (debug (concat handle " is " key))
+                        (commit "handle_links"
+                                (hash Links:[
+                                             (hash Base:me Link:oldKey Tag:"handle" LinkAction:HC_LinkAction_Del)
+                                             (hash Base:me Link:key Tag:"handle")
+                                             ]))
+                        (commit "handle_links"
+                                (hash Links:[
+                                             (hash Base:directory Link:oldKey Tag:"handle"  LinkAction:HC_LinkAction_Del)
+                                             (hash Base:directory Link:key Tag:"handle")
+                                             ]))
+                        key
+                        )
+                (addHandle handle)))
+  )
+
+(defn addHandle [handle]
+  // TODO confirm no collision
   (let [key (commit "handle" handle)        // On my source chain, commits a new handle entry
-        me  App_Key_Hash
-        directory App_DNA_Hash              // placeholder till we can calculate a hash
+        me  (getMe)
+        directory (getDirectory)
         ]
       (debug (concat handle " is " key))
 
-        // TODO confirm no collision before next step
+      // TODO check error status of commit?
       (commit "handle_links" (hash Links:[
               (hash Base:me Link:key Tag:"handle")
             ]))
-        
+
       (commit "handle_links" (hash Links:[
               (hash Base:directory Link:key Tag:"handle")
             ]))
-
-// (getLink me "handle")                // On the DHT, get on my hash the link marked "handle"
-    // (modmeta me "handle" key)            // On the DHT, mark my old handle as deprecated
-    key))
+    key)
+)
 
 // returns the handle of an agent by looking it up on the user's DHT entry, the last handle will be the current one?
 (defn getHandle [user_hash]
@@ -129,7 +157,7 @@
 // returns the agent associated agent by converting the handle to a hash
 // and getting that hash's source from the DHT
 (defn getAgent [handle]
-  (letseq [directory App_DNA_Hash
+  (letseq [directory (getDirectory)
            handleHash (makeHash handle)
            handleEntry (get handleHash (hash GetMask:HC_GetMask_Sources))
            sources (hget handleEntry %result [])
@@ -148,7 +176,7 @@
 (defn genesis []                            // 'hc gen chain' calls the genesis function in every zome file for the app
   (begin
     // use the agent string (usually email) used with 'hc init' to identify myself and create a new handle
-    (newHandle App_Agent_String)
+    (addHandle App_Agent_String)
 //    (commit "anchor" (hash type:"sys" value:"directory")))
     true))
 
@@ -190,7 +218,7 @@
 // Examples: Only Bob should be able to make Bob a "follower" of Alice
 //   - Only Bob should be able to list Alice in his people he is "following"
 //  true)
-// need always to check 
+// need always to check
 
 (defn validateMod [entryType hash newHash pkg sources] true)
 

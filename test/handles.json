@@ -1,5 +1,14 @@
 [
     {
+        "Convey":"genesis created a handle",
+        "Zome": "cludder",
+        "FnName": "getHandle",
+        "Input": "%key%",
+        "Output": "%agentstr%",
+        "Err": "",
+        "Regexp": ""
+    },
+    {
         "Convey":"We can create a new handle",
         "Zome": "cludder",
         "FnName": "newHandle",
