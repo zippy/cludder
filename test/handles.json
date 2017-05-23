@@ -5,6 +5,7 @@
         "FnName": "getHandle",
         "Input": "%key%",
         "Output": "%agentstr%",
+        "Exposure":"public",
         "Err": "",
         "Regexp": ""
     },
@@ -14,6 +15,7 @@
         "FnName": "newHandle",
         "Input": "buffaloBill",
         "Output": "%h2%",
+        "Exposure":"public",
         "Err": "",
         "Regexp": ""
     },
@@ -23,6 +25,7 @@
         "FnName": "getHandle",
         "Input": "%key%",
         "Output": "buffaloBill",
+        "Exposure":"public",
         "Err": "",
         "Regexp": ""
     },
@@ -32,6 +35,7 @@
         "FnName": "getAgent",
         "Input": "fooHandle",
         "Output": "",
+        "Exposure":"public",
         "Err": "",
         "Regexp": ""
     },
@@ -41,6 +45,7 @@
         "FnName": "getAgent",
         "Input": "buffaloBill",
         "Output": "%key%",
+        "Exposure":"public",
         "Err": "",
         "Regexp": ""
     }

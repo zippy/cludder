@@ -1,9 +1,9 @@
 # Arbitrary Application version number
-Version = 0
+Version = 1
 
 # Automatically-generated UUID generated and inserted here by 'hc clone'
 # Changing this or any part of the file will fork you into a new social organism/DHT
-Id = "16459cd5-0456-11e7-9200-109add63ffcb"
+Id = "00000000-0000-0000-0000-000000000000"
 
 # Name of the application
 Name = "Cludder"
@@ -15,7 +15,7 @@ HashType = "sha2-256"
 PropertiesSchema = "properties.json"
 
 # Inidicates which version (or later) of the holochain library this App requires
-RequiresVersion = 5
+RequiresVersion = 10
 
 # Values for the schema
 [Properties]
@@ -81,32 +81,42 @@ RequiresVersion = 5
   [[Zomes.Functions]]    
     Name = "getProperty"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "appProperty"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "follow"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "unfollow"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "post"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "getPostsBy"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "newHandle"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "getHandle"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "getAgent"
     CallingType = "string"
+    Exposure = "public"
   [[Zomes.Functions]]    
     Name = "getFollow"
     CallingType = "json"
+    Exposure = "public"
 
 # Additional zome files each need their own section specifying file paths and schemas
