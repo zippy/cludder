@@ -8,14 +8,15 @@ Id = "00000000-0000-0000-0000-000000000000"
 # Name of the application
 Name = "Cludder"
 
-# Selection of the hashing algorithm you want to use for the DHT's address-space
-HashType = "sha2-256"
+[DHTConfig]
+  # Selection of the hashing algorithm you want to use for the DHT's address-space
+  HashType = "sha2-256"
 
 # The source file for the data structure of your application properties
 PropertiesSchema = "properties.json"
 
 # Inidicates which version (or later) of the holochain library this App requires
-RequiresVersion = 10
+RequiresVersion = 11
 
 # Values for the schema
 [Properties]
