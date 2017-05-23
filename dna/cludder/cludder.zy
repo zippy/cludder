@@ -31,9 +31,11 @@
 
 (defn unfollow [userAddress]
   (let [me (getMe)]
-    (commit "unfollow" userAddress)         // On my source chain, commits the unfollow entry
-    // (delmeta userAddress me "follower")  // Marks the given follower link on their hash as deleted
-    // (delmeta me userAddress "following") // Marks the given following link on my hash as deleted
+    // On my source chain, commits the unfollow entry
+    (commit "unfollow" (hash Links:[
+                                    (hash Base:userAddress Link:me Tag:"follower" LinkAction:HC_LinkAction_Del)
+                                    (hash Base:me Link:userAddress Tag:"following" LinkAction:HC_LinkAction_Del)
+                                    ]))
     ))
 
 (defn post [postBody]
